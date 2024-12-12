@@ -24,34 +24,26 @@ const dataSchema = new mongoose.Schema({
 
 const DataModel = mongoose.model("ecom", dataSchema);
 
-app.get("https://fakestoreapi.com/products", async (req, res) => {
-        try {
-            const data = await DataModel.find();
-            res.json(data);
-            console.log("data",data);
-            
-        }
-        catch (err) {
-            res.status(500).json({ message: "Error fetching data", error: err });
-          }
-    }
-)
+app.get("/api/products", async (req, res) => {
+  try {
+      const data = await DataModel.find();
+      res.json(data);
+      console.log("data", data);
+  } catch (err) {
+      res.status(500).json({ message: "Error fetching data", error: err });
+  }
+});
 
-
-// Add new data
-app.post("https://fakestoreapi.com/products", async (req, res) => {
-    const { id, title, price , description , image} = req.body;
-    console.log(" id, name", id, name);
-  
-    try {
-      const newData = new DataModel({ id, title, price , description , image});
+app.post("/api/products", async (req, res) => {
+  const { id, title, price, description, image } = req.body;
+  try {
+      const newData = new DataModel({ id, title, price, description, image });
       await newData.save();
       res.status(201).json({ message: "Data added successfully" });
-    } catch (err) {
+  } catch (err) {
       res.status(500).json({ message: "Error adding data", error: err });
-    }
-  });
-
+  }
+});
 
 // Start server
 app.listen(PORT, () => {

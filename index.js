@@ -15,6 +15,7 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Mongoose Schema and Model
+
 const dataSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
   name: { type: String, required: true },
@@ -26,7 +27,8 @@ const DataModel = mongoose.model("Data", dataSchema);
 // Fetch all data
 app.get("/api/data", async (req, res) => {
   try {
-    const data = await DataModel.find();
+    const data =
+     await DataModel.find();
     res.json(data);
   } catch (err) {
     res.status(500).json({ message: "Error fetching data", error: err });   
