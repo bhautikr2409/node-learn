@@ -15,7 +15,6 @@ mongoose.connect('mongodb://localhost:27017/ecom')
     .catch((err) => console.error("MongoDB connection error:", err))
 
 const dataSchema = new mongoose.Schema({
-    id: { type: String, required: true },
     title: { type: String, required: true },
     price: { type: String, required: true },
     description: { type: String, required: true },
@@ -35,15 +34,48 @@ app.get("/api/products", async (req, res) => {
 });
 
 app.post("/api/products", async (req, res) => {
-  const { id, title, price, description, image } = req.body;
+  const {  title, price, description, image } = req.body;
   try {
-      const newData = new DataModel({ id, title, price, description, image });
+      const newData = new DataModel({ title, price, description, image });
       await newData.save();
       res.status(201).json({ message: "Data added successfully" });
   } catch (err) {
       res.status(500).json({ message: "Error adding data", error: err });
   }
 });
+
+app.put("/api/products/:id", async (req, res) => {
+    const { id } = req.params;
+    const updatedData = req.body;
+    try{
+        const result = await DataModel.findOneAndUpdate({ id }, updatedData ,{
+            new: true,
+        });
+        if(!result){
+            return res.status(404).json({ message: "Data not found" });
+        }
+        res.json({ message: "Data updated successfully", data: result });
+    }
+    catch(err){
+        res.status(500).json({ message: "Error updating data", error: err });
+    }
+
+})
+
+
+app.delete("/api/products/:id" , async (req,res)=>{
+    const { id } = req.params
+    try{
+        const result = await DataModel.findByIdAndDelete(id);
+        if(!result){
+            return res.status(404).json({ message: "Data not found" });
+        }
+        res.json({ message: "Data deleted successfully"});
+    }
+    catch(err){
+        res.status(500).json({ message: "Error deleting data", error: err });
+    } 
+})
 
 // Start server
 app.listen(PORT, () => {
